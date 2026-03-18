@@ -1,0 +1,422 @@
+<!doctype html>
+<html>
+  <head>
+    <title>AMT Reasoning Example</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <!-- N3.js for local Turtle parsing (replaces RDF4J triplestore) -->
+    <script src="https://cdn.jsdelivr.net/npm/n3@1.17.2/browser/n3.min.js"></script>
+    <!-- AMT logic (depends on N3.js, must come after) -->
+    <script type="text/javascript" src="js/amt.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.20.0/vis.min.js"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.20.0/vis.min.css"
+      rel="stylesheet"
+      type="text/css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        overflow: hidden;
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+      }
+
+      #footer {
+        height: 100px;
+        color: white;
+        background-color: #4f628b !important;
+      }
+
+      #graph {
+        height: calc(100% - 100px);
+      }
+
+      .description {
+        margin-left: 25px;
+      }
+
+      .modal {
+        width: 90% !important;
+        height: 100% !important;
+      }
+
+      div.info {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        width: auto;
+        height: auto;
+        border: 1px dashed grey;
+        background: #4f628b;
+        padding-top: 0px;
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-bottom: 15px;
+        color: white !important;
+      }
+      div.logos {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: auto;
+        height: auto;
+      }
+    </style>
+    <script>
+      var _AMT = {};
+      _AMT.prefix = "http://rgzm.de/datingmechanism#";
+      _AMT.graph = {};
+      _AMT.edit = false;
+      _AMT.thisNodes = [];
+      _AMT.thisEdges = [];
+      _AMT.inverse = false;
+      _AMT.mode = "example5";
+      _AMT.reasoning = false;
+      _AMT.rdf = "";
+      var update = function () {
+        _AMT.amt = new AMT();
+        _AMT.amt.load(function () {
+          var graph = _AMT.amt.getGraph(false, true);
+          _AMT.graph.nodes = new vis.DataSet(graph.nodes);
+          _AMT.graph.edges = new vis.DataSet(graph.edges);
+        });
+
+        setTimeout(function () {
+          var options = {
+            layout: {
+              randomSeed: 5,
+            },
+            physics: true,
+          };
+          new vis.Network(
+            document.getElementById("graph"),
+            {
+              nodes: _AMT.graph.nodes,
+              edges: _AMT.graph.edges,
+            },
+            options,
+          );
+          console.log("reasoning", _AMT.reasoning);
+          var updated = _AMT.amt.getGraph(_AMT.reasoning, false);
+          _AMT.graph.edges.clear();
+          _AMT.graph.nodes.clear();
+          for (var i in updated.nodes) {
+            updated.nodes[i].length = 10 / updated.nodes[i].width;
+            if (!_AMT.edit) {
+              updated.nodes[i].chosen = false;
+            }
+            if (updated.nodes[i].concept === _AMT.prefix + "LimesPart") {
+              updated.nodes[i].color = {
+                background: "coral",
+                border: "coral",
+                highlight: {
+                  background: "white",
+                  border: "coral",
+                },
+              };
+              updated.nodes[i].shape = "dot";
+              updated.nodes[i].font = {
+                size: 16,
+                face: "monospace",
+              };
+              updated.nodes[i].size = 20;
+            } else {
+              updated.nodes[i].color = {
+                background: "grey",
+                border: "black",
+                highlight: {
+                  background: "white",
+                  border: "black",
+                },
+              };
+              updated.nodes[i].shape = "box";
+            }
+          }
+          for (var i in updated.edges) {
+            updated.edges[i].arrowStrikethrough = false;
+            updated.edges[i].chosen = false;
+            if (updated.edges[i].width < 0.0000001) {
+              updated.edges[i].hidden = true;
+            }
+            var roleWithPrefix = _AMT.prefix;
+            if (
+              updated.edges[i].role === roleWithPrefix + "e" ||
+              updated.edges[i].role === roleWithPrefix + "b" ||
+              updated.edges[i].role === roleWithPrefix + "a" ||
+              updated.edges[i].role === roleWithPrefix + "d" ||
+              updated.edges[i].role === roleWithPrefix + "di" ||
+              updated.edges[i].role === roleWithPrefix + "o" ||
+              updated.edges[i].role === roleWithPrefix + "oi" ||
+              updated.edges[i].role === roleWithPrefix + "m" ||
+              updated.edges[i].role === roleWithPrefix + "mi" ||
+              updated.edges[i].role === roleWithPrefix + "s" ||
+              updated.edges[i].role === roleWithPrefix + "si" ||
+              updated.edges[i].role === roleWithPrefix + "f" ||
+              updated.edges[i].role === roleWithPrefix + "fi"
+            ) {
+              updated.edges[i].color = {
+                color: "blue",
+                highlight: "black",
+              };
+              updated.edges[i].length = 250;
+              updated.edges[i].smooth = false;
+              if (_AMT.mode === "example5" || _AMT.mode === "example6") {
+                updated.edges[i].label =
+                  updated.edges[i].role.replace(_AMT.prefix, "") +
+                  ": " +
+                  Math.floor(updated.edges[i].width * 1000) / 1000;
+              } else {
+                updated.edges[i].label =
+                  updated.edges[i].role.replace(_AMT.prefix, "") +
+                  ": " +
+                  Math.floor(updated.edges[i].width * 100) / 100;
+              }
+              updated.edges[i].arrows = "to";
+            }
+          }
+          _AMT.graph.nodes.update(updated.nodes);
+          _AMT.graph.edges.update(updated.edges);
+          _AMT.thisNodes = updated.nodes;
+          _AMT.thisEdges = updated.edges;
+          $("#title").html($("#amt-viz option:selected").text());
+        }, 1000);
+      };
+      $(function () {
+        update();
+        $("#rdfModal").modal({
+          complete: function () {
+            openRdfModal(true);
+          },
+        });
+        $("#graphPropModal").modal({
+          dismissible: false,
+          complete: function () {
+            openGraphPropModal(true);
+          },
+        });
+      });
+      var edit = function () {
+        if (_AMT.reasoning) {
+          _AMT.reasoning = false;
+          $("#r-but").removeClass("blue");
+          $("#r-but").addClass("red");
+        } else {
+          _AMT.reasoning = true;
+          $("#r-but").removeClass("red");
+          $("#r-but").addClass("blue");
+        }
+        update();
+      };
+      var openGraphPropModal = function (close) {
+        $("#amt-viz").material_select();
+        if (close) $("#graphPropModal").modal("close");
+        else $("#graphPropModal").modal("open");
+      };
+      var openRdfModal = function (close) {
+        if (close) $("#rdfModal").modal("close");
+        else $("#rdfModal").modal("open");
+      };
+      var reloadGraphWithProperties = function () {
+        _AMT.mode = $("#amt-viz").val();
+        update();
+        $("#graphPropModal").modal("close");
+      };
+      var exportRDF = function () {
+        var nodesAndEdges = "";
+        nodesAndEdges +=
+          "@prefix amt: <http://academic-meta-tool.xyz/vocab#> .\r\n";
+        nodesAndEdges +=
+          "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\r\n";
+        nodesAndEdges +=
+          "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .\r\n";
+        nodesAndEdges +=
+          "@prefix rgzm: <http://rgzm.de/datingmechanism#> .\r\n";
+        nodesAndEdges += "\r\n";
+        for (var node in _AMT.thisNodes) {
+          nodesAndEdges +=
+            "rgzm:" +
+            _AMT.thisNodes[node].id.replace(_AMT.prefix, "") +
+            " amt:instanceOf" +
+            " rgzm:" +
+            _AMT.thisNodes[node].concept.replace(_AMT.prefix, "") +
+            ".\r\n";
+          nodesAndEdges +=
+            "rgzm:" +
+            _AMT.thisNodes[node].id.replace(_AMT.prefix, "") +
+            " rdfs:label" +
+            ' "' +
+            _AMT.thisNodes[node].label +
+            '" .\r\n';
+        }
+        nodesAndEdges += "\r\n";
+        for (var edge in _AMT.thisEdges) {
+          var emptyNode = "_:" + StrID();
+          nodesAndEdges +=
+            emptyNode +
+            " rdf:subject" +
+            " rgzm:" +
+            _AMT.thisEdges[edge].from.replace(_AMT.prefix, "") +
+            ".\r\n";
+          nodesAndEdges +=
+            emptyNode +
+            " rdf:predicate" +
+            " rgzm:" +
+            _AMT.thisEdges[edge].role.replace(_AMT.prefix, "") +
+            ".\r\n";
+          nodesAndEdges +=
+            emptyNode +
+            " rdf:object" +
+            " rgzm:" +
+            _AMT.thisEdges[edge].to.replace(_AMT.prefix, "") +
+            ".\r\n";
+          nodesAndEdges +=
+            emptyNode +
+            " amt:weight" +
+            ' "' +
+            _AMT.thisEdges[edge].width.replace(_AMT.prefix, "") +
+            '"^^<http://www.w3.org/2001/XMLSchema#double> .\r\n';
+          if (nodesAndEdges.includes("Infinity")) {
+            nodesAndEdges = nodesAndEdges.replace("Infinity", 1.0);
+          }
+        }
+        $("#hiddenclipboard").text(nodesAndEdges);
+        copyToClipboard("#hiddenclipboard");
+        console.log(nodesAndEdges);
+        _AMT.rdf = nodesAndEdges;
+        $("#rdf").val(nodesAndEdges);
+        openRdfModal();
+      };
+    </script>
+  </head>
+
+  <body>
+    <div id="graph" class="col s12"></div>
+    <div id="footer" class="page-footer col s12 orange lighten-3">
+      <div class="container">
+        <div class="row">
+          <div id="props" class="col s5 left-align">
+            <a
+              class="btn-floating btn-large blue"
+              onclick="openGraphPropModal()"
+              title="change example"
+              ><i class="material-icons">sync</i></a
+            >
+            <a
+              class="btn-floating btn-large brown"
+              onclick="exportRDF()"
+              title="get RDF"
+              ><i class="material-icons">share</i></a
+            >
+          </div>
+          <div id="buttons" class="col s7 left-align">
+            <a
+              class="btn-floating btn-large red"
+              id="r-but"
+              onclick="edit()"
+              title="reasoning on/off"
+              ><i class="material-icons">bubble_chart</i></a
+            >
+            <span style="padding-left: 30px; font-weight: bold" id="title"
+              >loading...</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modals -->
+    <div id="graphPropModal" class="modal">
+      <div class="modal-content">
+        <h4>Please choose an example:</h4>
+        <br />
+        <form class="col s12">
+          <div class="row">
+            <div class="input-field col s11">
+              <select id="amt-viz">
+                <option value="example5" selected>
+                  Hadrian's Wall->Wetteraulimes->Elisabethenstraße
+                </option>
+              </select>
+              <label>visualisation style</label>
+            </div>
+            <div class="col s1">
+              <a
+                class="btn-floating btn-large green"
+                onclick="reloadGraphWithProperties()"
+                title="reload"
+                ><i class="material-icons">check</i></a
+              >
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div id="rdfModal" class="modal">
+      <div
+        class="modal-content"
+        style="
+          border: 1px black solid;
+          width: 100%;
+          height: 100%;
+          padding: 20px;
+          margin: 0px;
+        ">
+        <textarea
+          id="rdf"
+          style="
+            width: 100%;
+            height: 100%;
+            font-family: &quot;Courier New&quot;;
+            font-size: 14px;
+          "></textarea>
+      </div>
+    </div>
+    <!-- hidden clipboard helper -->
+    <span id="hiddenclipboard" style="display: none"></span>
+    <!-- Info DIV -->
+    <div class="info">
+      <h4>Temporal Reasoning @ AMT</h4>
+      Software by Florian Thiery (RGZM) and Martin Unold (i3mainz).
+      <br />Data concept by Florian Thiery / A.W. Mees (RGZM). <br /><br />
+      <a class="btn-floating btn-small red"
+        ><i class="material-icons">bubble_chart</i></a
+      >&nbsp;<i>reasoning on</i>
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <a class="btn-floating btn-small blue"
+        ><i class="material-icons">bubble_chart</i></a
+      >&nbsp;<i>reasoning off</i> <br /><br />
+      <a class="btn-floating btn-small blue"
+        ><i class="material-icons">sync</i></a
+      >&nbsp;<i>change example</i>
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <a class="btn-floating btn-small brown"
+        ><i class="material-icons">share</i></a
+      >&nbsp;<i>get RDF</i>
+    </div>
+    <div class="logos">
+      <a href="http://academic-meta-tool.xyz" target="_blank"
+        ><img src="amt_logos.png" height="300"
+      /></a>
+    </div>
+  </body>
+</html>

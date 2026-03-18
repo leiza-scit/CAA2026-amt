@@ -1,0 +1,86 @@
+@prefix amt: <http://academic-meta-tool.xyz/vocab#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rgzm: <http://rgzm.de/datingmechanism#> .
+
+# AMT Ontology - Leonard Edition
+
+amt:Concept rdfs:subClassOf rdfs:Class .
+amt:Role rdfs:subClassOf rdf:Property .
+amt:Axiom rdfs:subclassOf rdfs:Class .
+amt:InferenceAxiom rdfs:subClassOf amt:Axiom .
+amt:IntegrityAxiom rdfs:subClassOf amt:Axiom .
+amt:RoleChainAxiom rdfs:subClassOf amt:InferenceAxiom .
+amt:InverseAxiom rdfs:subClassOf amt:InferenceAxiom .
+amt:DisjointAxiom rdfs:subClassOf amt:IntegrityAxiom .
+amt:SelfDisjointAxiom rdfs:subClassOf amt:IntegrityAxiom .
+amt:Logic rdfs:subClassOf rdfs:Class .
+amt:LukasiewiczLogic rdf:type amt:Logic .
+amt:ProductLogic rdf:type amt:Logic .
+amt:GoedelLogic rdf:type amt:Logic .
+
+# Dating Mechanism Ontology
+
+# concepts
+
+rgzm:LimesPart rdf:type amt:Concept .
+rgzm:LimesPart rdfs:label "Limes Part" .
+rgzm:LimesPart amt:placeholder "Name of a part of the Limes" .
+
+# roles time
+
+rgzm:b rdf:type amt:Role .
+rgzm:b rdfs:label 'before' .
+rgzm:b rdfs:domain rgzm:LimesPart .
+rgzm:b rdfs:range rgzm:LimesPart .
+rgzm:a rdf:type amt:Role .
+rgzm:a rdfs:label 'after' .
+rgzm:a rdfs:domain rgzm:LimesPart .
+rgzm:a rdfs:range rgzm:LimesPart .
+rgzm:d rdf:type amt:Role .
+rgzm:d rdfs:label 'during' .
+rgzm:d rdfs:domain rgzm:LimesPart .
+rgzm:d rdfs:range rgzm:LimesPart .
+rgzm:di rdf:type amt:Role .
+rgzm:di rdfs:label 'contains' .
+rgzm:di rdfs:domain rgzm:LimesPart .
+rgzm:di rdfs:range rgzm:LimesPart .
+
+# time RoleChainAxioms
+
+rgzm:RCA0001 rdf:type amt:RoleChainAxiom .
+rgzm:RCA0001 amt:antecedent1 rgzm:d .
+rgzm:RCA0001 amt:antecedent2 rgzm:a .
+rgzm:RCA0001 amt:consequent rgzm:a .
+rgzm:RCA0001 amt:logic amt:ProductLogic .
+
+
+# Limes Parts concepts (weighted)
+
+rgzm:HW1 amt:instanceOf rgzm:LimesPart. rgzm:HW1 rdfs:label 'HadriansWall'.
+rgzm:WL1 amt:instanceOf rgzm:LimesPart. rgzm:WL1 rdfs:label 'Wetteraulimes'.
+rgzm:ES1 amt:instanceOf rgzm:LimesPart. rgzm:ES1 rdfs:label 'Elisabethenstraße'.
+
+rgzm:NL2 amt:instanceOf rgzm:LimesPart. rgzm:NL2 rdfs:label 'Neckarlimes'.
+rgzm:WL2 amt:instanceOf rgzm:LimesPart. rgzm:WL2 rdfs:label 'Wetteraulimes'.
+rgzm:AL2 amt:instanceOf rgzm:LimesPart. rgzm:AL2 rdfs:label 'Alblimes'.
+
+# Limes Parts concepts (Pearson correlation coefficient normalized)
+
+rgzm:HW3 amt:instanceOf rgzm:LimesPart. rgzm:HW3 rdfs:label 'HadriansWall'.
+rgzm:WL3 amt:instanceOf rgzm:LimesPart. rgzm:WL3 rdfs:label 'Wetteraulimes'.
+rgzm:ES3 amt:instanceOf rgzm:LimesPart. rgzm:ES3 rdfs:label 'Elisabethenstraße'.
+
+rgzm:NL4 amt:instanceOf rgzm:LimesPart. rgzm:NL4 rdfs:label 'Neckarlimes'.
+rgzm:WL4 amt:instanceOf rgzm:LimesPart. rgzm:WL4 rdfs:label 'Wetteraulimes'.
+rgzm:AL4 amt:instanceOf rgzm:LimesPart. rgzm:AL4 rdfs:label 'Alblimes'.
+
+# Allen interval algebra roles (weighted)
+
+_:node01 rdf:subject rgzm:HW1 . _:node01 rdf:predicate rgzm:d . _:node01 rdf:object rgzm:WL1 . _:node01 amt:weight "0.762" .
+_:node02 rdf:subject rgzm:WL1 . _:node02 rdf:predicate rgzm:a . _:node02 rdf:object rgzm:ES1 . _:node02 amt:weight "0.780" .
+
+# Allen interval algebra roles (Pearson correlation coefficient normalized)
+
+_:node05 rdf:subject rgzm:HW3 . _:node05 rdf:predicate rgzm:d . _:node05 rdf:object rgzm:WL3 . _:node05 amt:weight "0.762" .
+_:node06 rdf:subject rgzm:WL3 . _:node06 rdf:predicate rgzm:a . _:node06 rdf:object rgzm:ES3 . _:node06 amt:weight "0.780" .

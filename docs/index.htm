@@ -1,0 +1,202 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Potter Attribution @ AMT</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <!-- RDF parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/n3@1.17.2/browser/n3.min.js"></script>
+
+    <!-- Graph visualisation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.20.0/vis.min.js"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.20.0/vis.min.css"
+      rel="stylesheet" />
+
+    <!-- jQuery + jQuery UI -->
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+
+    <!-- Materialize -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet" />
+
+    <!-- AMT scripts (order matters: n3 -> amt -> amt-render) -->
+    <script src="js/amt.js"></script>
+    <script src="js/amt-render.js"></script>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        overflow: hidden;
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+      }
+
+      #footer {
+        height: 100px;
+        color: white;
+        background-color: #4f628b !important;
+      }
+
+      #graph {
+        height: calc(100% - 100px);
+      }
+
+      .modal {
+        width: 90% !important;
+        height: 100% !important;
+      }
+
+      div.info {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        border: 1px dashed grey;
+        background: #4f628b;
+        padding: 0 15px 15px 15px;
+        color: white !important;
+      }
+
+      div.logos {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Graph canvas -->
+    <div id="graph" class="col s12"></div>
+
+    <!-- Footer toolbar -->
+    <div id="footer" class="page-footer col s12 orange lighten-3">
+      <div class="container">
+        <div class="row">
+          <div id="props" class="col s5 left-align">
+            <!--<a
+              class="btn-floating btn-large blue"
+              onclick="openGraphPropModal()"
+              title="change dataset"
+              ><i class="material-icons">sync</i></a
+            >
+            <a
+              class="btn-floating btn-large brown"
+              onclick="exportRDF()"
+              title="export RDF"
+              ><i class="material-icons">share</i></a
+            >-->
+          </div>
+          <div id="buttons" class="col s7 left-align">
+            <a
+              class="btn-floating btn-large red"
+              id="r-but"
+              onclick="toggleReasoning()"
+              title="reasoning on/off"
+              ><i class="material-icons">bubble_chart</i></a
+            >
+            <span style="padding-left: 30px; font-weight: bold" id="title"
+              >loading...</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: dataset selector -->
+    <div id="graphPropModal" class="modal">
+      <div class="modal-content">
+        <h4>Please choose a dataset:</h4>
+        <br />
+        <div class="row">
+          <div class="input-field col s11">
+            <select id="amt-viz">
+              <option value="potter" selected>
+                Potter Attribution Example
+              </option>
+            </select>
+            <label>dataset</label>
+          </div>
+          <div class="col s1">
+            <a
+              class="btn-floating btn-large green"
+              onclick="reloadGraphWithProperties()"
+              title="load"
+              ><i class="material-icons">check</i></a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: RDF export -->
+    <div id="rdfModal" class="modal">
+      <div
+        class="modal-content"
+        style="
+          border: 1px black solid;
+          width: 100%;
+          height: 100%;
+          padding: 20px;
+          margin: 0;
+        ">
+        <textarea
+          id="rdf"
+          style="
+            width: 100%;
+            height: 100%;
+            font-family: &quot;Courier New&quot;;
+            font-size: 14px;
+          "></textarea>
+      </div>
+    </div>
+
+    <!-- Hidden clipboard helper -->
+    <span id="hiddenclipboard" style="display: none"></span>
+
+    <!-- Info panel -->
+    <div class="info">
+      <h4>Potter Attribution @ AMT</h4>
+      Software by Florian Thiery (LEIZA) and Martin Unold (i3mainz).
+      <br />Data concept by Florian Thiery / A.W. Mees (LEIZA). <br /><br />
+      <a class="btn-floating btn-small red"
+        ><i class="material-icons">bubble_chart</i></a
+      >&nbsp;<i>no reasoning</i>
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <a class="btn-floating btn-small blue"
+        ><i class="material-icons">bubble_chart</i></a
+      >&nbsp;<i>reasoning</i> <br /><br />
+      <!--<a class="btn-floating btn-small blue"
+        ><i class="material-icons">sync</i></a
+      >&nbsp;<i>change dataset</i>
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <a class="btn-floating btn-small brown"
+        ><i class="material-icons">share</i></a
+      >&nbsp;<i>export RDF</i>-->
+    </div>
+
+    <!-- Logo panel -->
+    <div class="logos">
+      <a href="http://academic-meta-tool.xyz" target="_blank"
+        ><img src="amt_logos.png" height="300"
+      /></a>
+    </div>
+  </body>
+</html>

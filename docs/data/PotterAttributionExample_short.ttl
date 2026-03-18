@@ -1,0 +1,76 @@
+@prefix amt: <http://academic-meta-tool.xyz/vocab#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix ex: <http://github.com/leiza-scit/CAA2026-amt/> .
+
+# AMT Ontology - Leonard Edition
+
+# Potter Attribution Ontology
+
+# concepts
+
+ex:Feature rdf:type amt:Concept .
+
+ex:Potter rdf:type amt:Concept .
+
+ex:Sherd rdf:type amt:Concept .
+
+ex:FindContext rdf:type amt:Concept .
+
+# roles
+
+ex:FeatureAttributionDegree rdf:type amt:Role .
+ex:FeatureAttributionDegree rdfs:domain ex:Feature .
+ex:FeatureAttributionDegree rdfs:range ex:Potter .
+
+ex:PotterAttributionDegree rdf:type amt:Role .
+ex:PotterAttributionDegree rdfs:domain ex:Potter .
+ex:PotterAttributionDegree rdfs:range ex:Sherd .
+
+ex:WeightedDatingDegree rdf:type amt:Role .
+ex:WeightedDatingDegree rdfs:domain ex:Sherd .
+ex:WeightedDatingDegree rdfs:range ex:FindContext .
+
+ex:FigureTypeRepertoireChoice rdf:type amt:Role .
+ex:FigureTypeRepertoireChoice rdfs:domain ex:Feature .
+ex:FigureTypeRepertoireChoice rdfs:range ex:Sherd .
+
+ex:DatingWeight rdf:type amt:Role .
+ex:DatingWeight rdfs:domain ex:Potter .
+ex:DatingWeight rdfs:range ex:FindContext .
+
+# RoleChainAxioms
+
+ex:RCA0001 rdf:type amt:RoleChainAxiom .
+ex:RCA0001 amt:antecedent1 ex:FeatureAttributionDegree .
+ex:RCA0001 amt:antecedent2 ex:PotterAttributionDegree .
+ex:RCA0001 amt:consequent ex:FigureTypeRepertoireChoice .
+ex:RCA0001 amt:logic amt:ProductLogic .
+
+ex:RCA0002 rdf:type amt:RoleChainAxiom .
+ex:RCA0002 amt:antecedent1 ex:PotterAttributionDegree .
+ex:RCA0002 amt:antecedent2 ex:WeightedDatingDegree .
+ex:RCA0002 amt:consequent ex:DatingWeight .
+ex:RCA0002 amt:logic amt:ProductLogic .
+
+# Example Data Concepts
+
+ex:Feature_Red amt:instanceOf ex:Feature. 
+ex:Feature_Blue amt:instanceOf ex:Feature. 
+ex:Feature_Green amt:instanceOf ex:Feature. 
+ex:Potter_A amt:instanceOf ex:Potter.
+ex:Potter_B amt:instanceOf ex:Potter. 
+ex:Sherd_X amt:instanceOf ex:Sherd. 
+ex:Sherd_Z amt:instanceOf ex:Sherd. 
+ex:FindContext_I amt:instanceOf ex:FindContext. 
+
+# Example Data Roles
+
+_:node01 rdf:subject ex:Feature_Red . _:node01 rdf:predicate ex:FeatureAttributionDegree . _:node01 rdf:object ex:Potter_A . _:node01 amt:weight 0.5 .
+_:node02 rdf:subject ex:Potter_A . _:node02 rdf:predicate ex:PotterAttributionDegree . _:node02 rdf:object ex:Sherd_X . _:node02 amt:weight 0.6 .
+_:node03 rdf:subject ex:Sherd_X . _:node03 rdf:predicate ex:WeightedDatingDegree . _:node03 rdf:object ex:FindContext_I . _:node03 amt:weight 0.51 .
+
+_:node11 rdf:subject ex:Feature_Blue . _:node11 rdf:predicate ex:FeatureAttributionDegree . _:node11 rdf:object ex:Potter_B . _:node11 amt:weight 1.0 .
+_:node21 rdf:subject ex:Feature_Green . _:node21 rdf:predicate ex:FeatureAttributionDegree . _:node21 rdf:object ex:Potter_B . _:node21 amt:weight 0.33 .
+_:node12 rdf:subject ex:Potter_B . _:node12 rdf:predicate ex:PotterAttributionDegree . _:node12 rdf:object ex:Sherd_Z . _:node12 amt:weight 0.83 .
+_:node13 rdf:subject ex:Sherd_Z . _:node13 rdf:predicate ex:WeightedDatingDegree . _:node13 rdf:object ex:FindContext_I . _:node13 amt:weight 0.6 .

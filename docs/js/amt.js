@@ -147,7 +147,7 @@ var AMT = function () {
 
   // Vocabulary IRIs
   var PREFIX = "http://academic-meta-tool.xyz/vocab#";
-  var PREFIX_INSTANCES = "http://rgzm.de/datingmechanism#";
+  var PREFIX_INSTANCES = "http://github.com/leiza-scit/CAA2026-amt/";
 
   var RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
   var RDFS = "http://www.w3.org/2000/01/rdf-schema#";
@@ -181,7 +181,7 @@ var AMT = function () {
   var P_ROLE = AMT_NS + "role";
 
   // Path to the TTL data file (relative to docs/index.htm)
-  var TTL_PATH = "data/LimesExample.ttl";
+  var TTL_PATH = "data/PotterAttributionExample.ttl";
 
   // --------------------------------------------------------
   // loadGraph: replaces the 5 SPARQL queryStore() calls
@@ -340,64 +340,13 @@ var AMT = function () {
   };
 
   // --------------------------------------------------------
-  // filterNodes / filterEdges: mirror original mode logic
+  // filterNodes / filterEdges: no filtering, show all data
   // --------------------------------------------------------
   var filterNodes = function (data) {
-    if (_AMT.mode === "example1" || _AMT.mode === "example2") {
-      return data.filter(function (item) {
-        return item.id.includes("1");
-      });
-    }
-    if (_AMT.mode === "example3" || _AMT.mode === "example4") {
-      return data.filter(function (item) {
-        return item.id.includes("2");
-      });
-    }
-    if (_AMT.mode === "example5") {
-      return data.filter(function (item) {
-        return item.id.includes("3");
-      });
-    }
-    if (_AMT.mode === "example6") {
-      return data.filter(function (item) {
-        return item.id.includes("4");
-      });
-    }
     return data;
   };
 
   var filterEdges = function (data) {
-    var prefix = _AMT.prefix;
-    if (_AMT.mode === "example1") {
-      return data.filter(function (item) {
-        return item.role === prefix + "d" || item.role === prefix + "a";
-      });
-    }
-    if (_AMT.mode === "example2") {
-      return data.filter(function (item) {
-        return item.role === prefix + "di" || item.role === prefix + "b";
-      });
-    }
-    if (_AMT.mode === "example3") {
-      return data.filter(function (item) {
-        return item.role === prefix + "f";
-      });
-    }
-    if (_AMT.mode === "example4") {
-      return data.filter(function (item) {
-        return item.role === prefix + "fi";
-      });
-    }
-    if (_AMT.mode === "example5") {
-      return data.filter(function (item) {
-        return item.role === prefix + "d" || item.role === prefix + "a";
-      });
-    }
-    if (_AMT.mode === "example6") {
-      return data.filter(function (item) {
-        return item.role === prefix + "f";
-      });
-    }
     return data;
   };
 
@@ -428,11 +377,7 @@ var AMT = function () {
         width = 1.0;
       } else {
         width = parseFloat(graph.edges[i].width);
-        if (_AMT.mode === "example5" || _AMT.mode === "example6") {
-          width = width.toFixed(3);
-        } else {
-          width = width.toFixed(2);
-        }
+        width = width.toFixed(3);
       }
       cpy.edges.push({
         role: graph.edges[i].role,

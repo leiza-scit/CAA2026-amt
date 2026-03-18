@@ -29,9 +29,10 @@
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet" />
 
-    <!-- AMT scripts (order matters: n3 -> amt -> amt-render) -->
+    <!-- AMT scripts (order matters: n3 -> amt -> amt-render -> amt-export) -->
     <script src="js/amt.js"></script>
     <script src="js/amt-render.js"></script>
+    <script src="js/amt-export.js"></script>
 
     <style>
       * {
@@ -91,6 +92,18 @@
       <div class="container">
         <div class="row">
           <div id="props" class="col s5 left-align">
+            <a
+              class="btn-floating btn-large teal"
+              onclick="exportTTL()"
+              title="download TTL (incl. reasoning)"
+              ><i class="material-icons">file_download</i></a
+            >
+            <a
+              class="btn-floating btn-large purple"
+              onclick="exportCypher()"
+              title="download Cypher for Neo4J"
+              ><i class="material-icons">device_hub</i></a
+            >
             <!--<a
               class="btn-floating btn-large blue"
               onclick="openGraphPropModal()"
@@ -190,6 +203,13 @@
       <a class="btn-floating btn-small brown"
         ><i class="material-icons">share</i></a
       >&nbsp;<i>export RDF</i>-->
+      <a class="btn-floating btn-small teal"
+        ><i class="material-icons">file_download</i></a
+      >&nbsp;<i>download TTL</i>
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <a class="btn-floating btn-small purple"
+        ><i class="material-icons">device_hub</i></a
+      >&nbsp;<i>download Cypher</i>
     </div>
 
     <!-- Logo panel -->

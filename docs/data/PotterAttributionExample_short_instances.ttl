@@ -1,0 +1,120 @@
+@prefix amt:  <http://academic-meta-tool.xyz/vocab#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex:   <http://github.com/leiza-scit/CAA2026-amt/> .
+
+# ── Instances ────────────────────────────────────────────
+
+ex:Feature_Red
+    amt:instanceOf  ex:Feature ;
+    rdfs:label      "Feature Red" .
+
+ex:Feature_Blue
+    amt:instanceOf  ex:Feature ;
+    rdfs:label      "Feature Blue" .
+
+ex:Feature_Green
+    amt:instanceOf  ex:Feature ;
+    rdfs:label      "Feature Green" .
+
+ex:Potter_A
+    amt:instanceOf  ex:Potter ;
+    rdfs:label      "Potter A" .
+
+ex:Potter_B
+    amt:instanceOf  ex:Potter ;
+    rdfs:label      "Potter B" .
+
+ex:Sherd_X
+    amt:instanceOf  ex:Sherd ;
+    rdfs:label      "Sherd X" .
+
+ex:Sherd_Z
+    amt:instanceOf  ex:Sherd ;
+    rdfs:label      "Sherd Z" .
+
+ex:FindContext_I
+    amt:instanceOf  ex:FindContext ;
+    rdfs:label      "Find Context I" .
+
+# ── Original Assertions ──────────────────────────────────
+
+_:a1
+    rdf:subject   ex:Feature_Red ;
+    rdf:predicate ex:FeatureAttributionDegree ;
+    rdf:object    ex:Potter_A ;
+    amt:weight    "0.500000"^^xsd:double .
+
+_:a2
+    rdf:subject   ex:Potter_A ;
+    rdf:predicate ex:PotterAttributionDegree ;
+    rdf:object    ex:Sherd_X ;
+    amt:weight    "0.600000"^^xsd:double .
+
+_:a3
+    rdf:subject   ex:Sherd_X ;
+    rdf:predicate ex:WeightedDatingDegree ;
+    rdf:object    ex:FindContext_I ;
+    amt:weight    "0.510000"^^xsd:double .
+
+_:a4
+    rdf:subject   ex:Feature_Blue ;
+    rdf:predicate ex:FeatureAttributionDegree ;
+    rdf:object    ex:Potter_B ;
+    amt:weight    "1.000000"^^xsd:double .
+
+_:a5
+    rdf:subject   ex:Feature_Green ;
+    rdf:predicate ex:FeatureAttributionDegree ;
+    rdf:object    ex:Potter_B ;
+    amt:weight    "0.330000"^^xsd:double .
+
+_:a6
+    rdf:subject   ex:Potter_B ;
+    rdf:predicate ex:PotterAttributionDegree ;
+    rdf:object    ex:Sherd_Z ;
+    amt:weight    "0.830000"^^xsd:double .
+
+_:a7
+    rdf:subject   ex:Sherd_Z ;
+    rdf:predicate ex:WeightedDatingDegree ;
+    rdf:object    ex:FindContext_I ;
+    amt:weight    "0.600000"^^xsd:double .
+
+# ── Inferred Assertions (Reasoning) ─────────────────────
+
+_:i1
+    rdf:subject    ex:Feature_Red ;
+    rdf:predicate  ex:FigureTypeRepertoireChoice ;
+    rdf:object     ex:Sherd_X ;
+    amt:weight     "0.300000"^^xsd:double ;
+    amt:inferred   "true"^^xsd:boolean .
+
+_:i2
+    rdf:subject    ex:Feature_Blue ;
+    rdf:predicate  ex:FigureTypeRepertoireChoice ;
+    rdf:object     ex:Sherd_Z ;
+    amt:weight     "0.830000"^^xsd:double ;
+    amt:inferred   "true"^^xsd:boolean .
+
+_:i3
+    rdf:subject    ex:Feature_Green ;
+    rdf:predicate  ex:FigureTypeRepertoireChoice ;
+    rdf:object     ex:Sherd_Z ;
+    amt:weight     "0.273900"^^xsd:double ;
+    amt:inferred   "true"^^xsd:boolean .
+
+_:i4
+    rdf:subject    ex:Potter_A ;
+    rdf:predicate  ex:DatingWeight ;
+    rdf:object     ex:FindContext_I ;
+    amt:weight     "0.310000"^^xsd:double ;
+    amt:inferred   "true"^^xsd:boolean .
+
+_:i5
+    rdf:subject    ex:Potter_B ;
+    rdf:predicate  ex:DatingWeight ;
+    rdf:object     ex:FindContext_I ;
+    amt:weight     "0.500000"^^xsd:double ;
+    amt:inferred   "true"^^xsd:boolean .

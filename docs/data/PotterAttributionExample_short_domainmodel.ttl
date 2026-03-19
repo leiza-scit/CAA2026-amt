@@ -1,0 +1,74 @@
+@prefix amt:  <http://academic-meta-tool.xyz/vocab#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex:   <http://github.com/leiza-scit/CAA2026-amt/> .
+
+# ── Domain Model ─────────────────────────────────────────
+
+# Concepts
+ex:Feature
+    rdf:type          amt:Concept ;
+    rdfs:label        "Feature / Figure Type" ;
+    amt:placeholder   "Feature / Figure Type" .
+
+ex:Potter
+    rdf:type          amt:Concept ;
+    rdfs:label        "Potter" ;
+    amt:placeholder   "Potter" .
+
+ex:Sherd
+    rdf:type          amt:Concept ;
+    rdfs:label        "Sherd" ;
+    amt:placeholder   "Pot Sherd" .
+
+ex:FindContext
+    rdf:type          amt:Concept ;
+    rdfs:label        "Find Context" ;
+    amt:placeholder   "Find Context" .
+
+# Roles
+ex:FeatureAttributionDegree
+    rdf:type      amt:Role ;
+    rdfs:label    "attribution" ;
+    rdfs:domain   ex:Feature ;
+    rdfs:range    ex:Potter .
+
+ex:PotterAttributionDegree
+    rdf:type      amt:Role ;
+    rdfs:label    "attribution" ;
+    rdfs:domain   ex:Potter ;
+    rdfs:range    ex:Sherd .
+
+ex:WeightedDatingDegree
+    rdf:type      amt:Role ;
+    rdfs:label    "weighted dating" ;
+    rdfs:domain   ex:Sherd ;
+    rdfs:range    ex:FindContext .
+
+ex:FigureTypeRepertoireChoice
+    rdf:type      amt:Role ;
+    rdfs:label    "repertoire choice" ;
+    rdfs:domain   ex:Feature ;
+    rdfs:range    ex:Sherd .
+
+ex:DatingWeight
+    rdf:type      amt:Role ;
+    rdfs:label    "dating weight" ;
+    rdfs:domain   ex:Potter ;
+    rdfs:range    ex:FindContext .
+
+# Axioms
+ex:RCA0001
+    rdf:type          amt:RoleChainAxiom ;
+    amt:antecedent1   ex:FeatureAttributionDegree ;
+    amt:antecedent2   ex:PotterAttributionDegree ;
+    amt:consequent    ex:FigureTypeRepertoireChoice ;
+    amt:logic         amt:ProductLogic .
+
+ex:RCA0002
+    rdf:type          amt:RoleChainAxiom ;
+    amt:antecedent1   ex:PotterAttributionDegree ;
+    amt:antecedent2   ex:WeightedDatingDegree ;
+    amt:consequent    ex:DatingWeight ;
+    amt:logic         amt:ProductLogic .
